@@ -33,8 +33,10 @@ upper_dark_brown = np.array([20, 255, 100])
 # image_path = Path('corrosion_pictures/3.png')
 # image = cv2.imread(image_path)
 input_dir = Path('corrosion_pictures')
-output_dir = Path('processed_pictures')
-output_dir.mkdir(exist_ok=True)
+output_dir1 = Path('processed_pictures')
+output_dir1.mkdir(exist_ok=True)
+output_dir2 = Path('mask')
+output_dir2.mkdir(exist_ok=True)
 
 for image_path in input_dir.glob('*.png'):
     image = cv2.imread(str(image_path))
@@ -95,6 +97,10 @@ for image_path in input_dir.glob('*.png'):
     overlay = cv2.addWeighted(Clean_image, 1, mask_colored, 0.5, 0)
 
     # Save the result image in the output directory
-    output_path = output_dir / image_path.name
+    output_path = output_dir1 / image_path.name
     cv2.imwrite(str(output_path), overlay)
+    output_path = output_dir2 / image_path.name
+    # Transform the green mask_colored to white
+    mask_colored[np.where((mask_colored == [0, 255, 0]).all(axis=2))] = [255, 255, 255]
+    cv2.imwrite(str(output_path), mask_colored)
 
