@@ -90,12 +90,21 @@ for image_path in input_dir.glob('*.png'):
                 # Change the color of the mask inside the rectangle to green
                 mask_colored[y:y+h, x:x+w][mask_inside[y:y+h, x:x+w] == 255] = [0, 255, 0]
 
-    # Overlay the original image and the colored mask with a transparency of 50%
-    overlay = cv2.addWeighted(image, 1, mask_colored, 0.5, 0)
+                # Label the rectangle
+                text = "Rust Zone"
+                font = cv2.FONT_HERSHEY_SIMPLEX
+                font_scale = 0.5
+                font_color = (0, 255, 0)
+                thickness = 1
+                text_size = cv2.getTextSize(text, font, font_scale, thickness)[0]
+                text_x = x
+                text_y = y + h + text_size[1] + 5  # 5 pixels below the rectangle
+                cv2.putText(image, text, (text_x, text_y), font, font_scale, font_color, thickness)
+
 
     # Save the result image in the output directory
     output_path = output_dir / image_path.name
-    cv2.imwrite(str(output_path), overlay)
+    cv2.imwrite(str(output_path), image)
 
     # cv2.imshow('Mask1', mask1)
     # cv2.imshow('Mask2', mask2)
