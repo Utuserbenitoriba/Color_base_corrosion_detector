@@ -38,6 +38,8 @@ output_dir.mkdir(exist_ok=True)
 
 for image_path in input_dir.glob('*.png'):
     image = cv2.imread(str(image_path))
+    Clean_image = cv2.imread(str(image_path))
+
 
     # Check if the image was loaded successfully
     if image is None:
@@ -84,13 +86,13 @@ for image_path in input_dir.glob('*.png'):
         for contour in contours:
             if cv2.contourArea(contour) > 30:
                 x, y, w, h = cv2.boundingRect(contour)
-                cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)
+                cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 0)
 
                 # Change the color of the mask inside the rectangle to green
                 mask_colored[y:y+h, x:x+w][mask_inside[y:y+h, x:x+w] == 255] = [0, 255, 0]
 
     # Overlay the original image and the colored mask with a transparency of 50%
-    overlay = cv2.addWeighted(image, 1, mask_colored, 0.5, 0)
+    overlay = cv2.addWeighted(Clean_image, 1, mask_colored, 0.5, 0)
 
     # Save the result image in the output directory
     output_path = output_dir / image_path.name
