@@ -2,6 +2,7 @@ import numpy as np
 import argparse
 import cv2
 from pathlib import Path
+import os
 
 # H S V color ranges for corrosion. (Hue, Saturation, Value)
 lower_corrosion = np.array([0,50,50])
@@ -12,6 +13,20 @@ upper_corrosion2 = np.array([179,255,255])
 # Defining a more rigurous range for the corrosion inside the rectangle
 lower_corrosion_inside = np.array([0,50,50])
 upper_corrosion_inside = np.array([17,255,255])
+
+# HSV ranges for black and dark red colors
+lower_black = np.array([0, 0, 0])
+upper_black = np.array([180, 255, 30])
+
+lower_dark_red = np.array([0, 50, 50])
+upper_dark_red = np.array([10, 255, 100])
+
+lower_brown = np.array([10, 100, 20])
+upper_brown = np.array([20, 255, 200])
+
+lower_dark_brown = np.array([10, 50, 20])
+upper_dark_brown = np.array([20, 255, 100])
+
 
 
 # Load the image
@@ -31,9 +46,24 @@ image_hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
 # Create a mask for the corrosion color
 mask1 = cv2.inRange(image_hsv, lower_corrosion, upper_corrosion)
 mask2 = cv2.inRange(image_hsv, lower_corrosion2, upper_corrosion2)
+
+# Combine the two masks to look for corrosion
 mask = cv2.bitwise_or(mask1, mask2)
-# Create a mask for the inside of the rectangle
+
+# Create a mask for the inside of the rectangle, different colors
+mask_broader = cv2.inRange(image_hsv, lower_corrosion_inside, upper_corrosion_inside)
 mask_inside = cv2.inRange(image_hsv, lower_corrosion_inside, upper_corrosion_inside)
+mask_black = cv2.inRange(image_hsv, lower_black, upper_black)
+mask_dark_red = cv2.inRange(image_hsv, lower_dark_red, upper_dark_red)
+mask_brown = cv2.inRange(image_hsv, lower_brown, upper_brown)
+mask_dark_brown = cv2.inRange(image_hsv, lower_dark_brown, upper_dark_brown)
+
+# Combine all masks
+mask_inside = cv2.bitwise_or(mask_broader, mask_black)
+mask_inside = cv2.bitwise_or(mask_inside, mask_dark_red)
+mask_inside = cv2.bitwise_or(mask_inside, mask_brown)
+mask_inside = cv2.bitwise_or(mask_inside, mask_dark_brown)
+
 
 # Ignoring a rectangle in the image (date of in the picture)
 x1, y1 = 600, 510
@@ -58,8 +88,9 @@ overlay = cv2.addWeighted(image, 1, mask_colored, 0.5, 0)
 
 #cv2.imshow('Mask1', mask1)
 #cv2.imshow('Mask2', mask2)
+# cv2.imshow('Mask_black', mask_black)
 cv2.imshow('Original Image', image)
-# cv2.imshow('Mask_inside', mask_inside)
+cv2.imshow('Mask_inside', mask_inside)
 cv2.imshow('Mask', mask)
 # cv2.imshow('hsv Image', image_hsv)
 cv2.imshow('Overlay Image', overlay)
