@@ -10,7 +10,7 @@ upper_corrosion = np.array([12,255,255])
 # Corrosion color red is split into two ranges in the hsv color space
 lower_corrosion2 = np.array([165,50,50])
 upper_corrosion2 = np.array([179,255,255])
-# Defining a more rigurous range for the corrosion inside the rectangle
+# Defining a more rigorous range for the corrosion inside the rectangle
 lower_corrosion_inside = np.array([0,50,50])
 upper_corrosion_inside = np.array([17,255,255])
 
@@ -71,7 +71,6 @@ for image_path in input_dir.glob('*.png'):
     mask_inside = cv2.bitwise_or(mask_inside, mask_brown)
     mask_inside = cv2.bitwise_or(mask_inside, mask_dark_brown)
 
-
     # Ignoring a rectangle in the image (date of in the picture)
     x1, y1 = 600, 510
     x3, y3 = 800, 550
@@ -97,13 +96,3 @@ for image_path in input_dir.glob('*.png'):
     output_path = output_dir / image_path.name
     cv2.imwrite(str(output_path), overlay)
 
-    # cv2.imshow('Mask1', mask1)
-    # cv2.imshow('Mask2', mask2)
-    # cv2.imshow('Mask_black', mask_black)
-    # cv2.imshow('Original Image', image)
-    # cv2.imshow('Mask_inside', mask_inside)
-    # cv2.imshow('Mask', mask)
-    # cv2.imshow('hsv Image', image_hsv)
-    # cv2.imshow('Overlay Image', overlay)
-    # cv2.waitKey(0)
-    # cv2.destroyAllWindows()
